@@ -1,4 +1,4 @@
-package com.nukkitx.plugin.java;
+package com.nukkitx.plugin.loader.java;
 
 import java.net.URL;
 import java.net.URLClassLoader;

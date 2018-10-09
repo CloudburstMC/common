@@ -1,5 +1,6 @@
 package com.nukkitx.plugin;
 
+import com.google.common.base.Strings;
 import com.nukkitx.api.plugin.PluginDependency;
 import com.nukkitx.api.plugin.PluginDescription;
 import com.nukkitx.api.plugin.PluginLoader;
@@ -21,15 +22,15 @@ public class SimplePluginDescription implements PluginDescription {
 
     public SimplePluginDescription(String id, String name, String version, Collection<String> authors, String description,
                                    Collection<PluginDependency> dependencies, String url, Path path, PluginLoader loader) {
-        this.id = Objects.requireNonNull(id, "id");
-        this.name = Objects.requireNonNull(name, "name");
-        this.version = Objects.requireNonNull(version, "version");
+        this.id = Objects.requireNonNull(id, "Missing id");
+        this.name = Strings.isNullOrEmpty(name) ? id : name;
+        this.version = Objects.requireNonNull(version, "Missing version");
         this.authors.addAll(authors);
         this.description = description;
         this.dependencies.addAll(dependencies);
         this.url = url;
         this.path = path;
-        this.loader = Objects.requireNonNull(loader, "laoder");
+        this.loader = Objects.requireNonNull(loader, "loader");
     }
 
     public SimplePluginDescription(@Nonnull PluginDescription description) {

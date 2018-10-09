@@ -1,4 +1,4 @@
-package com.nukkitx.plugin.java;
+package com.nukkitx.plugin.loader.java;
 
 import com.nukkitx.api.plugin.PluginDependency;
 import com.nukkitx.api.plugin.PluginLoader;

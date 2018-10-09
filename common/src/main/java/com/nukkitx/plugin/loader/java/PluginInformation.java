@@ -1,4 +1,4 @@
-package com.nukkitx.plugin.java;
+package com.nukkitx.plugin.loader.java;
 
 import com.nukkitx.api.plugin.Dependency;
 import lombok.Data;
@@ -16,4 +16,11 @@ public class PluginInformation {
     private String version;
     private String url;
     private String description;
+
+    public String getName() {
+        if (name == null) {
+            return id;
+        }
+        return name;
+    }
 }

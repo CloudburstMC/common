@@ -1,4 +1,4 @@
-package com.nukkitx.plugin.java;
+package com.nukkitx.plugin.loader.java;
 
 import lombok.Getter;
 import org.objectweb.asm.AnnotationVisitor;

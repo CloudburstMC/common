@@ -1,4 +1,4 @@
-package com.nukkitx.plugin.java;
+package com.nukkitx.plugin.loader.java;
 
 import com.nukkitx.api.plugin.Dependency;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes;
 public class PluginAnnotationVisitor extends AnnotationVisitor {
     private final String className;
     private final PluginInformation information;
-    private String arrayName = null;
+    private Type type = Type.INFORMATION;
 
     public PluginAnnotationVisitor(String className) {
         super(Opcodes.ASM5);
@@ -19,11 +19,11 @@ public class PluginAnnotationVisitor extends AnnotationVisitor {
 
     @Override
     public void visit(String name, Object value) {
-        switch (arrayName) {
-            case "dependencies":
+        switch (type) {
+            case DEPENDENCIES:
                 information.getDependencies().add((Dependency) value);
                 break;
-            case "authors":
+            case AUTHORS:
                 information.getAuthors().add((String) value);
                 break;
             default:
@@ -43,11 +43,34 @@ public class PluginAnnotationVisitor extends AnnotationVisitor {
                     case "url":
                         information.setUrl((String) value);
                 }
+                break;
         }
+
+        super.visit(name, value);
     }
 
+    @Override
     public AnnotationVisitor visitArray(String name) {
-        this.arrayName = name;
-        return null;
+        switch (name) {
+            case "dependencies":
+                type = Type.DEPENDENCIES;
+                break;
+            case "authors":
+                type = Type.AUTHORS;
+                break;
+        }
+        return this;
+    }
+
+    @Override
+    public void visitEnd() {
+        type = Type.INFORMATION;
+        super.visitEnd();
+    }
+
+    private enum Type {
+        INFORMATION,
+        DEPENDENCIES,
+        AUTHORS
     }
 }

@@ -1,12 +1,14 @@
-package com.nukkitx.plugin;
+package com.nukkitx.plugin.loader;
 
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
 import com.nukkitx.api.plugin.*;
-import com.nukkitx.plugin.java.JavaPluginClassLoader;
-import com.nukkitx.plugin.java.JavaPluginDescription;
-import com.nukkitx.plugin.java.PluginClassVisitor;
-import com.nukkitx.plugin.java.PluginInformation;
+import com.nukkitx.plugin.SimplePluginContainer;
+import com.nukkitx.plugin.SimplePluginDependency;
+import com.nukkitx.plugin.loader.java.JavaPluginClassLoader;
+import com.nukkitx.plugin.loader.java.JavaPluginDescription;
+import com.nukkitx.plugin.loader.java.PluginClassVisitor;
+import com.nukkitx.plugin.loader.java.PluginInformation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.objectweb.asm.ClassReader;
@@ -28,7 +30,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 public class JavaPluginLoader implements PluginLoader {
-    private static final PathMatcher PATH_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.jar");
+    private static final PathMatcher PATH_MATCHER = FileSystems.getDefault().getPathMatcher("glob:**.jar");
     private final Map<Class, Object> dependencies = new HashMap<>();
     private final Path dataPath;
 
@@ -68,9 +70,13 @@ public class JavaPluginLoader implements PluginLoader {
                         dependencies.add(new SimplePluginDependency(dependency.id(), dependency.version(), dependency.optional()));
                     }
 
-                    return new JavaPluginDescription(information.getId(), information.getName(), information.getVersion(),
-                            information.getAuthors(), information.getDescription(), dependencies, information.getUrl(),
-                            path, this, information.getClassName());
+                    try {
+                        return new JavaPluginDescription(information.getId(), information.getName(), information.getVersion(),
+                                information.getAuthors(), information.getDescription(), dependencies, information.getUrl(),
+                                path, this, information.getClassName());
+                    } catch (NullPointerException e) {
+                        throw new IllegalArgumentException("Plugin does not contain the correct information", e);
+                    }
                 }
             }
         }

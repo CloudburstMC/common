@@ -7,7 +7,7 @@
     <groupId>com.nukkitx</groupId>
     <artifactId>common-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>Common Parent</name>
     <url>https://github.com/NukkitX/common</url>
     <inceptionYear>2018</inceptionYear>

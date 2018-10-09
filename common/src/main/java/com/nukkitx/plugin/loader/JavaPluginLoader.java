@@ -32,11 +32,9 @@ import java.util.jar.Manifest;
 public class JavaPluginLoader implements PluginLoader {
     private static final PathMatcher PATH_MATCHER = FileSystems.getDefault().getPathMatcher("glob:**.jar");
     private final Map<Class, Object> dependencies = new HashMap<>();
-    private final Path dataPath;
 
-    private JavaPluginLoader(Map<Class, Object> dependencies, Path dataPath) {
+    private JavaPluginLoader(Map<Class, Object> dependencies) {
         this.dependencies.putAll(dependencies);
-        this.dataPath = dataPath;
     }
 
     public static Builder builder() {
@@ -118,7 +116,7 @@ public class JavaPluginLoader implements PluginLoader {
                 .create();
         injector.register(PluginDescription.class, description);
         injector.register(Logger.class, logger);
-        injector.register(Path.class, dataPath.resolve(description.getId()));
+        injector.register(Path.class, path.getParent().resolve(description.getId()).toAbsolutePath());
         dependencies.forEach(injector::register);
 
         return injector.newInstance(clazz);
@@ -135,7 +133,6 @@ public class JavaPluginLoader implements PluginLoader {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Builder {
         private final Map<Class, Object> dependencies = new HashMap<>();
-        private Path dataPath = null;
 
         public Builder registerDependency(Class clazz, Object instance) {
             Objects.requireNonNull(clazz, "clazz");
@@ -148,17 +145,8 @@ public class JavaPluginLoader implements PluginLoader {
             return this;
         }
 
-        public Builder dataPath(Path dataPath) {
-            this.dataPath = Objects.requireNonNull(dataPath, "dataPath");
-            return this;
-        }
-
         public JavaPluginLoader build() {
-            if (dataPath == null) {
-                throw new NullPointerException("dataPath was not set");
-            }
-
-            return new JavaPluginLoader(dependencies, dataPath);
+            return new JavaPluginLoader(dependencies);
         }
     }
 }
